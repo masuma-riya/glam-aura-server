@@ -34,8 +34,12 @@ async function run() {
     //   res.send(result);
     // });
     app.get("/allProducts", async (req, res) => {
-      const { brand, category, sortBy, priceMin, priceMax } = req.query;
+      const { brand, category, sortBy, priceMin, priceMax, search } = req.query;
       const query = {};
+
+      if (search) {
+        query.productName = { $regex: search, $options: "i" };
+      }
 
       if (brand) {
         query.brand = brand;
