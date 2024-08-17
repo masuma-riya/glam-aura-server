@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rbwl5qc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ac-wkac0pk-shard-00-00.rbwl5qc.mongodb.net:27017,ac-wkac0pk-shard-00-01.rbwl5qc.mongodb.net:27017,ac-wkac0pk-shard-00-02.rbwl5qc.mongodb.net:27017/?ssl=true&replicaSet=atlas-1019oo-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -34,7 +34,7 @@ async function run() {
     //   res.send(result);
     // });
     app.get("/allProducts", async (req, res) => {
-      const { brand, category, sortBy } = req.query;
+      const { brand, category, sortBy, priceMin, priceMax, search } = req.query;
       const query = {};
 
       if (brand) {
@@ -42,6 +42,20 @@ async function run() {
       }
       if (category) {
         query.category = category;
+      }
+
+      if (search) {
+        query.productName = { $regex: search, $options: "i" };
+      }
+
+      if (priceMin || priceMax) {
+        query.price = {};
+        if (priceMin) {
+          query.price.$gte = parseFloat(priceMin);
+        }
+        if (priceMax) {
+          query.price.$lte = parseFloat(priceMax);
+        }
       }
 
       let sortOption = {};
