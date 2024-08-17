@@ -40,6 +40,9 @@ async function run() {
       if (brand) {
         query.brand = brand;
       }
+      if (category) {
+        query.category = category;
+      }
 
       if (priceMin || priceMax) {
         query.price = {};
