@@ -63,7 +63,7 @@ async function run() {
         sortOption.createdAt = -1;
       }
 
-      const result = await ProductsCollection.find(query)
+      
         .sort(sortOption)
         .toArray();
       res.send(result);
