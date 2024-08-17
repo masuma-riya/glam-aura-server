@@ -29,8 +29,33 @@ async function run() {
 
     // all data get
 
+    // app.get("/allProducts", async (req, res) => {
+    //   const result = await ProductsCollection.find().toArray();
+    //   res.send(result);
+    // });
     app.get("/allProducts", async (req, res) => {
-      const result = await ProductsCollection.find().toArray();
+      const { brand, category, sortBy } = req.query;
+      const query = {};
+
+      if (brand) {
+        query.brand = brand;
+      }
+      if (category) {
+        query.category = category;
+      }
+
+      let sortOption = {};
+      if (sortBy === "priceLowToHigh") {
+        sortOption.price = 1;
+      } else if (sortBy === "priceHighToLow") {
+        sortOption.price = -1;
+      } else if (sortBy === "newestFirst") {
+        sortOption.createdAt = -1;
+      }
+
+      const result = await ProductsCollection.find(query)
+        .sort(sortOption)
+        .toArray();
       res.send(result);
     });
 
