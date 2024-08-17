@@ -54,7 +54,6 @@ async function run() {
         }
       }
 
-      let sortOption = {};
       if (sortBy === "priceLowToHigh") {
         sortOption.price = 1;
       } else if (sortBy === "priceHighToLow") {
