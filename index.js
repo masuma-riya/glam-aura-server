@@ -34,18 +34,11 @@ async function run() {
     //   res.send(result);
     // });
     app.get("/allProducts", async (req, res) => {
-      const { brand, category, sortBy, priceMin, priceMax, search } = req.query;
+      const { brand, category, sortBy, priceMin, priceMax } = req.query;
       const query = {};
 
       if (brand) {
         query.brand = brand;
-      }
-      if (category) {
-        query.category = category;
-      }
-
-      if (search) {
-        query.productName = { $regex: search, $options: "i" };
       }
 
       if (priceMin || priceMax) {
