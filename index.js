@@ -28,13 +28,18 @@ async function run() {
     const ProductsCollection = client.db("glamAura").collection("products");
 
     // all data get
-
-    // app.get("/allProducts", async (req, res) => {
-    //   const result = await ProductsCollection.find().toArray();
-    //   res.send(result);
-    // });
     app.get("/allProducts", async (req, res) => {
-      const { brand, category, sortBy, priceMin, priceMax, search } = req.query;
+      const {
+        brand,
+        category,
+        sortBy,
+        sortByT,
+        priceMin,
+        priceMax,
+        search,
+        page = 1,
+        limit = 10,
+      } = req.query;
       const query = {};
 
       if (search) {
@@ -59,18 +64,26 @@ async function run() {
       }
 
       let sortOption = {};
-      if (sortBy === "priceLowToHigh") {
+      if (sortByT === "priceLowToHigh") {
         sortOption.price = 1;
-      } else if (sortBy === "priceHighToLow") {
+      } else if (sortByT === "priceHighToLow") {
         sortOption.price = -1;
       } else if (sortBy === "newestFirst") {
         sortOption.createdAt = -1;
       }
 
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const totalProducts = await ProductsCollection.countDocuments(query);
       const result = await ProductsCollection.find(query)
         .sort(sortOption)
+        .skip(skip)
+        .limit(parseInt(limit))
         .toArray();
-      res.send(result);
+
+      res.json({
+        data: result,
+        total: totalProducts,
+      });
     });
 
     // Send a ping to confirm a successful connection
